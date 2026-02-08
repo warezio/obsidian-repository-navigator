@@ -137,10 +137,3 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-
-# PDCA / bkit internal
-docs/.bkit-memory.json
-docs/.pdca-status.json
-
-# Claude internal
-**/CLAUDE.md
