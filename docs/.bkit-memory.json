@@ -1,10 +1,8 @@
 {
-  "sessionCount": 2,
+  "sessionCount": 4,
   "lastSession": {
-    "startedAt": "2026-02-07T22:35:00.000Z",
+    "startedAt": "2026-02-08T04:52:11.258Z",
     "platform": "claude",
-    "level": "Dynamic",
-    "feature": "obsidian-repo-nav",
-    "phase": "do"
+    "level": "Dynamic"
   }
 }
