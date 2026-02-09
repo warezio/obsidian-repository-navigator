@@ -1,19 +1,19 @@
 {
-  "name": "obsidian-repo-nav",
-  "version": "1.0.0",
-  "description": "Obsidian plugin for navigating repositories with Markdown-filtered tree view",
-  "main": "main.js",
-  "scripts": {
-    "dev": "node esbuild.config.mjs",
-    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
-  },
-  "keywords": [],
-  "author": "Jiho Lee",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^22.0.0",
-    "esbuild": "^0.24.0",
-    "obsidian": "latest",
-    "typescript": "^5.6.0"
-  }
+    "name": "obsidian-repo-nav",
+    "version": "1.0.0",
+    "description": "Obsidian plugin for navigating repositories with Markdown-filtered tree view",
+    "main": "main.js",
+    "scripts": {
+        "dev": "bun esbuild.config.mjs",
+        "build": "bunx tsc -noEmit -skipLibCheck && bun esbuild.config.mjs production"
+    },
+    "keywords": [],
+    "author": "warezio",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "esbuild": "^0.24.0",
+        "obsidian": "latest",
+        "typescript": "^5.6.0"
+    }
 }

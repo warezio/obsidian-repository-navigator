@@ -39,7 +39,7 @@ obsidian-repo-nav/
   "version": "0.1.0",
   "minAppVersion": "1.0.0",
   "description": "A sidebar tree view that shows only directories containing Markdown files, including hidden directories.",
-  "author": "Jiho Lee",
+  "author": "warezio",
   "authorUrl": "https://github.com/warezio",
   "isDesktopOnly": false
 }
@@ -58,7 +58,7 @@ obsidian-repo-nav/
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
   },
   "keywords": [],
-  "author": "Jiho Lee",
+  "author": "warezio",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^22.0.0",
