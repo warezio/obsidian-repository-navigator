@@ -1,8 +1,8 @@
 {
-  "id": "obsidian-repo-nav",
+  "id": "obsidian-repository-navigator",
   "name": "Repository Navigator",
   "version": "1.0.0",
-  "minAppVersion": "1.0.0",
+  "minAppVersion": "0.15.0",
   "description": "A sidebar tree view that shows only directories containing Markdown files, including hidden directories. Especially useful for Git repositories and other folder structures where Markdown files are mixed with code and non-Markdown files.",
   "author": "warezio",
   "authorUrl": "https://github.com/warezio",
