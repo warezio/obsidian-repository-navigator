@@ -64,10 +64,9 @@ export class RepoNavTreeView extends ItemView {
   }
 
   renderView(): void {
-    const container = this.containerEl.children[1] as HTMLElement;
-    container.empty();
+    this.contentEl.empty();
 
-    const headerEl = container.createDiv({ cls: "repo-nav-header" });
+    const headerEl = this.contentEl.createDiv({ cls: "repo-nav-header" });
 
     const allDirPaths = this.collectAllDirPaths(this.treeData);
     const isAllExpanded = allDirPaths.size > 0 && allDirPaths.size === this.expandedPaths.size;
@@ -95,7 +94,7 @@ export class RepoNavTreeView extends ItemView {
       this.refreshTree();
     });
 
-    const treeEl = container.createDiv({ cls: "repo-nav-tree" });
+    const treeEl = this.contentEl.createDiv({ cls: "repo-nav-tree" });
 
     if (
       !this.treeData ||
