@@ -1,6 +1,6 @@
-import { ItemView, WorkspaceLeaf, TFile, setIcon } from "obsidian";
+import { ItemView, MarkdownRenderer, WorkspaceLeaf, TFile, setIcon } from "obsidian";
 import type RepoNavPlugin from "./main";
-import { VIEW_TYPE_REPO_NAV, ICON_ID } from "./constants";
+import { VIEW_TYPE_REPO_NAV, VIEW_TYPE_HIDDEN_FILE, ICON_ID } from "./constants";
 import { TreeNode } from "./types";
 import { buildTree } from "./tree-builder";
 
@@ -297,14 +297,17 @@ export class RepoNavTreeView extends ItemView {
 
       nodeEl.addEventListener("click", async (e) => {
         e.stopPropagation();
+        const newTab = e.metaKey || e.ctrlKey;
         const file = this.app.vault.getAbstractFileByPath(node.path);
         if (file instanceof TFile) {
-          if (e.metaKey || e.ctrlKey) {
+          if (newTab) {
             const leaf = this.app.workspace.getLeaf("tab");
             await leaf.openFile(file);
           } else {
             await this.app.workspace.getLeaf(false).openFile(file);
           }
+        } else {
+          await this.openHiddenFile(node.path, newTab);
         }
       });
     }
@@ -352,5 +355,69 @@ export class RepoNavTreeView extends ItemView {
   async refreshTree(): Promise<void> {
     this.treeData = await buildTree(this.app, this.plugin.settings);
     this.renderView();
+  }
+
+  async openHiddenFile(filePath: string, newTab: boolean): Promise<void> {
+    const leaf = this.app.workspace.getLeaf(newTab ? "tab" : false);
+    await leaf.setViewState({
+      type: VIEW_TYPE_HIDDEN_FILE,
+      state: { filePath },
+    });
+    this.app.workspace.revealLeaf(leaf);
+  }
+}
+
+export class HiddenFileView extends ItemView {
+  private filePath = "";
+
+  getViewType(): string {
+    return VIEW_TYPE_HIDDEN_FILE;
+  }
+
+  getDisplayText(): string {
+    if (!this.filePath) return "Hidden File";
+    const name = this.filePath.split("/").pop() || this.filePath;
+    return name.replace(/\.[^.]+$/, "");
+  }
+
+  getIcon(): string {
+    return "file-text";
+  }
+
+  async setState(state: { filePath?: string }, result: { history: boolean }): Promise<void> {
+    if (state.filePath) {
+      this.filePath = state.filePath;
+      await this.renderContent();
+    }
+    await super.setState(state, result);
+  }
+
+  getState(): Record<string, unknown> {
+    return { filePath: this.filePath };
+  }
+
+  async onOpen(): Promise<void> {
+    if (this.filePath) {
+      await this.renderContent();
+    }
+  }
+
+  private async renderContent(): Promise<void> {
+    this.contentEl.empty();
+
+    const pathBar = this.contentEl.createDiv({ cls: "repo-nav-hidden-file-path" });
+    pathBar.createSpan({ text: this.filePath });
+
+    const contentEl = this.contentEl.createDiv({ cls: "repo-nav-hidden-file-content markdown-rendered" });
+
+    try {
+      const content = await this.app.vault.adapter.read(this.filePath);
+      await MarkdownRenderer.render(this.app, content, contentEl, this.filePath, this);
+    } catch {
+      contentEl.createDiv({
+        cls: "repo-nav-empty",
+        text: "Unable to read file.",
+      });
+    }
   }
 }

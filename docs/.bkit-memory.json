@@ -1,5 +1,11 @@
 {
-  "activeFeatures": [],
+  "activeFeatures": [
+    {
+      "feature": "fix-hidden-files-open",
+      "phase": "do",
+      "type": "bugfix"
+    }
+  ],
   "sessionCount": 18,
   "lastSession": {
     "startedAt": "2026-02-12T18:49:36.042Z",

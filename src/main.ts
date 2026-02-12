@@ -1,8 +1,8 @@
 import { Plugin, WorkspaceLeaf } from "obsidian";
 import { RepoNavSettings } from "./types";
-import { VIEW_TYPE_REPO_NAV, DEFAULT_SETTINGS, ICON_ID } from "./constants";
+import { VIEW_TYPE_REPO_NAV, VIEW_TYPE_HIDDEN_FILE, DEFAULT_SETTINGS, ICON_ID } from "./constants";
 import { RepoNavSettingTab } from "./settings";
-import { RepoNavTreeView } from "./tree-view";
+import { RepoNavTreeView, HiddenFileView } from "./tree-view";
 
 export default class RepoNavPlugin extends Plugin {
   settings: RepoNavSettings = DEFAULT_SETTINGS;
@@ -13,6 +13,11 @@ export default class RepoNavPlugin extends Plugin {
     this.registerView(
       VIEW_TYPE_REPO_NAV,
       (leaf: WorkspaceLeaf) => new RepoNavTreeView(leaf, this)
+    );
+
+    this.registerView(
+      VIEW_TYPE_HIDDEN_FILE,
+      (leaf: WorkspaceLeaf) => new HiddenFileView(leaf)
     );
 
     this.addRibbonIcon(ICON_ID, "Repository Navigator", () => {

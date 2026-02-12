@@ -142,3 +142,19 @@
   background: var(--background-modifier-border);
   margin: 4px 0;
 }
+
+/* Hidden File Preview Styles */
+.repo-nav-hidden-file-path {
+  padding: 6px 12px;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--background-modifier-border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.repo-nav-hidden-file-content {
+  padding: 16px;
+  overflow-y: auto;
+}
