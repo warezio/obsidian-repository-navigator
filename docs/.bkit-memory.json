@@ -12,6 +12,12 @@
       "archivedTo": "docs/archive/2026-02/context-menu-folders",
       "archivedAt": "2026-02-12",
       "matchRate": 98
+    },
+    {
+      "feature": "fix-hidden-dirs-visibility",
+      "archivedTo": "docs/archive/2026-02/fix-hidden-dirs-visibility",
+      "archivedAt": "2026-02-12",
+      "type": "bugfix"
     }
   ]
 }
