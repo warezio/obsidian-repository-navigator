@@ -1,6 +1,6 @@
 {
   "name": "obsidian-repo-nav",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Obsidian plugin for navigating repositories with Markdown-filtered tree view",
   "main": "main.js",
   "scripts": {
