@@ -101,7 +101,7 @@ export class RepoNavTreeView extends ItemView {
 
   async onOpen(): Promise<void> {
     this.expandedPaths = new Set();
-    this.treeData = buildTree(this.app, this.plugin.settings);
+    this.treeData = await buildTree(this.app, this.plugin.settings);
 
     if (!this.plugin.settings.collapseOnStartup && this.treeData) {
       for (const child of this.treeData.children) {
@@ -349,8 +349,8 @@ export class RepoNavTreeView extends ItemView {
     }
   }
 
-  refreshTree(): void {
-    this.treeData = buildTree(this.app, this.plugin.settings);
+  async refreshTree(): Promise<void> {
+    this.treeData = await buildTree(this.app, this.plugin.settings);
     this.renderView();
   }
 }

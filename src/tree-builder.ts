@@ -1,4 +1,4 @@
-import { App } from "obsidian";
+import { App, DataAdapter } from "obsidian";
 import { TreeNode, RepoNavSettings } from "./types";
 
 export function parseExtensions(input: string): string[] {
@@ -45,7 +45,46 @@ function sortTree(node: TreeNode, order: RepoNavSettings["sortOrder"]): void {
   }
 }
 
-export function buildTree(app: App, settings: RepoNavSettings): TreeNode {
+async function scanDirectory(
+  adapter: DataAdapter,
+  dirPath: string,
+  extensions: string[],
+  excludedSet: Set<string>,
+  showHiddenDirs: boolean
+): Promise<string[]> {
+  const files: string[] = [];
+  try {
+    const listing = await adapter.list(dirPath);
+
+    for (const filePath of listing.files) {
+      if (extensions.some((ext) => filePath.endsWith(ext))) {
+        files.push(filePath);
+      }
+    }
+
+    for (const folderPath of listing.folders) {
+      const folderName = folderPath.split("/").pop() || "";
+      if (excludedSet.has(folderName)) continue;
+      if (!showHiddenDirs && folderName.startsWith(".")) continue;
+      const subFiles = await scanDirectory(
+        adapter,
+        folderPath,
+        extensions,
+        excludedSet,
+        showHiddenDirs
+      );
+      files.push(...subFiles);
+    }
+  } catch {
+    // Ignore inaccessible directories
+  }
+  return files;
+}
+
+export async function buildTree(
+  app: App,
+  settings: RepoNavSettings
+): Promise<TreeNode> {
   const extensions = parseExtensions(settings.fileExtensions);
   const excludedSet = parseExcludedDirs(settings.excludedDirs);
 
@@ -61,13 +100,27 @@ export function buildTree(app: App, settings: RepoNavSettings): TreeNode {
   const nodeMap = new Map<string, TreeNode>();
   nodeMap.set("", root);
 
-  const allFiles = app.vault.getFiles();
-  const matchingFiles = allFiles.filter((f) =>
-    extensions.some((ext) => f.path.endsWith(ext))
-  );
+  let filePaths: string[];
 
-  for (const file of matchingFiles) {
-    const segments = file.path.split("/");
+  if (settings.showHiddenDirs) {
+    // Full vault scan via adapter to include hidden dirs at every level
+    filePaths = await scanDirectory(
+      app.vault.adapter,
+      "",
+      extensions,
+      excludedSet,
+      true
+    );
+  } else {
+    // Use Obsidian's indexed files (faster, already excludes hidden dirs)
+    const allFiles = app.vault.getFiles();
+    filePaths = allFiles
+      .filter((f) => extensions.some((ext) => f.path.endsWith(ext)))
+      .map((f) => f.path);
+  }
+
+  for (const filePath of filePaths) {
+    const segments = filePath.split("/");
     const fileName = segments.pop()!;
     let currentPath = "";
     let skipped = false;
@@ -103,7 +156,7 @@ export function buildTree(app: App, settings: RepoNavSettings): TreeNode {
       const displayName = fileName.replace(/\.[^.]+$/, "");
       const fileNode: TreeNode = {
         name: displayName,
-        path: file.path,
+        path: filePath,
         type: "file",
         children: [],
       };

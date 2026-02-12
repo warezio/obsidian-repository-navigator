@@ -63,13 +63,6 @@ export default class RepoNavPlugin extends Plugin {
       DEFAULT_SETTINGS,
       savedData
     );
-    // Migration: ensure hidden directories are shown by default
-    // This ensures existing users get the fix when upgrading
-    if (this.settings.showHiddenDirs === false) {
-      // Only override if explicitly false, reset to true
-      this.settings.showHiddenDirs = true;
-      await this.saveData(this.settings);
-    }
   }
 
   async saveSettings(): Promise<void> {
@@ -80,7 +73,7 @@ export default class RepoNavPlugin extends Plugin {
     for (const leaf of leaves) {
       const view = leaf.view;
       if (view instanceof RepoNavTreeView) {
-        view.refreshTree();
+        await view.refreshTree();
       }
     }
   }

@@ -38,11 +38,13 @@ Both builds run in parallel. The production flag enables minification and disabl
 
 ### Tree Building
 - `src/tree-builder.ts` - Core tree construction logic
-  - `buildTree()` - Filters files by extension, excludes directories, builds nested structure
+  - `buildTree()` - Async function that filters files by extension, excludes directories, builds nested structure
+  - Uses `adapter.list()` for direct filesystem scanning when `showHiddenDirs` is `true` (bypasses Obsidian's index which excludes hidden dirs)
+  - Falls back to `vault.getFiles()` when `showHiddenDirs` is `false` (faster, uses Obsidian index)
   - Uses `Map<string, TreeNode>` for efficient path lookup when building hierarchy
   - `sortTree()` - Recursive sorting based on settings (folders-first, A-Z, Z-A)
   - Helper functions for parsing comma-separated extensions and excluded directories
-  - Hidden directory handling: Folders starting with `.` are included when `showHiddenDirs` is `true` (default)
+  - `scanDirectory()` - Async recursive function for direct filesystem traversal
 
 ### Settings
 - `src/settings.ts` - `RepoNavSettingTab` extends `PluginSettingTab`
@@ -80,7 +82,9 @@ Files are displayed without extensions (`fileName.replace(/\.[^.]+$/, "")`) but 
 Settings are automatically persisted via Obsidian's `saveData()` and trigger tree refresh through `saveSettings()` callback.
 
 ### Hidden Directory Support
-Hidden directories (folders starting with `.` like `.github`, `.obsidian`) are shown by default. This is controlled by the `showHiddenDirs` setting which defaults to `true`. When upgrading from older versions, the plugin will automatically enable hidden directory visibility.
+Hidden directories (folders starting with `.` like `.github`, `.obsidian`) are shown by default. This is controlled by the `showHiddenDirs` setting which defaults to `true`.
+
+**Important**: Obsidian's `vault.getFiles()` does NOT include files inside hidden directories. When `showHiddenDirs` is enabled, the plugin uses `adapter.list()` to directly scan the filesystem, bypassing Obsidian's file index. This is the only way to discover files in hidden folders.
 
 ### Context Menu for Folders
 Right-click on any folder in the tree to open a context menu with:
