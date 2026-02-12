@@ -2,14 +2,15 @@
   "activeFeatures": [
     {
       "feature": "context-menu-folders",
-      "phase": "do",
-      "taskId": "3",
-      "createdAt": "2026-02-12"
+      "phase": "check",
+      "taskId": "4",
+      "createdAt": "2026-02-12",
+      "matchRate": 98
     }
   ],
-  "sessionCount": 12,
+  "sessionCount": 13,
   "lastSession": {
-    "startedAt": "2026-02-12T15:50:00.000Z",
+    "startedAt": "2026-02-12T16:00:00.000Z",
     "platform": "claude",
     "level": "Dynamic"
   }
