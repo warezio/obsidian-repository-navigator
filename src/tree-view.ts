@@ -358,34 +358,41 @@ export class RepoNavTreeView extends ItemView {
   }
 
   private async ensureVaultFile(filePath: string): Promise<TFile | null> {
-    // Already registered from a previous click?
     const existing = this.app.vault.getAbstractFileByPath(filePath);
     if (existing instanceof TFile) return existing;
 
     try {
-      const content = await this.app.vault.adapter.read(filePath);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const adapter = this.app.vault.adapter as any;
 
-      // Ensure each parent folder is registered in the vault
+      // Register parent folders into vault index
       const segments = filePath.split("/");
-      segments.pop(); // remove filename
+      segments.pop();
       let folderPath = "";
       for (const segment of segments) {
         folderPath = folderPath ? folderPath + "/" + segment : segment;
         if (!this.app.vault.getAbstractFileByPath(folderPath)) {
-          try {
-            await this.app.vault.createFolder(folderPath);
-          } catch {
-            // Folder already exists on disk — ignore
-          }
+          const folderRealPath = adapter.getRealPath(folderPath);
+          await adapter.reconcileFolderCreation(folderRealPath, folderPath);
         }
       }
 
-      // Register file in vault (writes same content + adds to vault index)
-      return await this.app.vault.create(filePath, content);
+      // Register file into vault index via internal reconciliation API
+      const realPath = adapter.getRealPath(filePath);
+      if (typeof adapter.reconcileFileInternal === "function") {
+        await adapter.reconcileFileInternal(realPath, filePath);
+      } else if (typeof adapter.reconcileFileChanged === "function") {
+        const fullRealPath = adapter.getFullRealPath(realPath);
+        const stat = await adapter.fs.stat(fullRealPath);
+        if (stat) {
+          adapter.reconcileFileChanged(realPath, filePath, stat);
+        }
+      }
+
+      const file = this.app.vault.getAbstractFileByPath(filePath);
+      return file instanceof TFile ? file : null;
     } catch {
-      // vault.create() failed — check if it got registered despite the error
-      const retry = this.app.vault.getAbstractFileByPath(filePath);
-      return retry instanceof TFile ? retry : null;
+      return null;
     }
   }
 
