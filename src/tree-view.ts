@@ -1,6 +1,16 @@
-import { ItemView, MarkdownRenderer, WorkspaceLeaf, TFile, setIcon } from "obsidian";
+import {
+  ItemView,
+  MarkdownRenderer,
+  WorkspaceLeaf,
+  TFile,
+  setIcon,
+} from "obsidian";
 import type RepoNavPlugin from "./main";
-import { VIEW_TYPE_REPO_NAV, VIEW_TYPE_HIDDEN_FILE, ICON_ID } from "./constants";
+import {
+  VIEW_TYPE_REPO_NAV,
+  VIEW_TYPE_HIDDEN_FILE,
+  ICON_ID,
+} from "./constants";
 import { TreeNode } from "./types";
 import { buildTree } from "./tree-builder";
 
@@ -114,18 +124,18 @@ export class RepoNavTreeView extends ItemView {
     this.renderView();
 
     this.registerEvent(
-      this.app.vault.on("create", () => this.debouncedRefresh())
+      this.app.vault.on("create", () => this.debouncedRefresh()),
     );
     this.registerEvent(
-      this.app.vault.on("delete", () => this.debouncedRefresh())
+      this.app.vault.on("delete", () => this.debouncedRefresh()),
     );
     this.registerEvent(
-      this.app.vault.on("rename", () => this.debouncedRefresh())
+      this.app.vault.on("rename", () => this.debouncedRefresh()),
     );
     this.registerEvent(
       this.app.workspace.on("active-leaf-change", () =>
-        this.updateActiveFile()
-      )
+        this.updateActiveFile(),
+      ),
     );
   }
 
@@ -185,7 +195,8 @@ export class RepoNavTreeView extends ItemView {
     const headerEl = this.contentEl.createDiv({ cls: "repo-nav-header" });
 
     const allDirPaths = this.collectAllDirPaths(this.treeData);
-    const isAllExpanded = allDirPaths.size > 0 && allDirPaths.size === this.expandedPaths.size;
+    const isAllExpanded =
+      allDirPaths.size > 0 && allDirPaths.size === this.expandedPaths.size;
 
     const toggleBtn = headerEl.createEl("button", {
       attr: { "aria-label": isAllExpanded ? "Collapse all" : "Expand all" },
@@ -212,10 +223,7 @@ export class RepoNavTreeView extends ItemView {
 
     const treeEl = this.contentEl.createDiv({ cls: "repo-nav-tree" });
 
-    if (
-      !this.treeData ||
-      this.treeData.children.length === 0
-    ) {
+    if (!this.treeData || this.treeData.children.length === 0) {
       treeEl.createDiv({
         cls: "repo-nav-empty",
         text: "No Markdown files found in this vault.",
@@ -231,7 +239,7 @@ export class RepoNavTreeView extends ItemView {
   private renderNode(
     parentEl: HTMLElement,
     node: TreeNode,
-    depth: number
+    depth: number,
   ): void {
     const nodeEl = parentEl.createDiv({ cls: "repo-nav-node" });
     nodeEl.style.paddingLeft = `${depth * 16}px`;
@@ -284,6 +292,7 @@ export class RepoNavTreeView extends ItemView {
       }
     } else {
       nodeEl.addClass("repo-nav-file");
+      nodeEl.style.paddingLeft = `${(depth + 1) * 16}px`;
 
       const activeFile = this.app.workspace.getActiveFile();
       if (activeFile && activeFile.path === node.path) {
@@ -344,7 +353,7 @@ export class RepoNavTreeView extends ItemView {
 
     if (activeFile) {
       const match = this.containerEl.querySelector(
-        `.repo-nav-file[data-path="${CSS.escape(activeFile.path)}"]`
+        `.repo-nav-file[data-path="${CSS.escape(activeFile.path)}"]`,
       );
       if (match) {
         match.addClass("repo-nav-active");
@@ -432,7 +441,10 @@ export class HiddenFileView extends ItemView {
     return "file-text";
   }
 
-  async setState(state: { filePath?: string }, result: { history: boolean }): Promise<void> {
+  async setState(
+    state: { filePath?: string },
+    result: { history: boolean },
+  ): Promise<void> {
     if (state.filePath) {
       this.filePath = state.filePath;
       await this.renderContent();
@@ -459,7 +471,9 @@ export class HiddenFileView extends ItemView {
     this.contentEl.empty();
     this.contentEl.addClass("markdown-reading-view");
 
-    const pathBar = this.contentEl.createDiv({ cls: "repo-nav-hidden-file-path" });
+    const pathBar = this.contentEl.createDiv({
+      cls: "repo-nav-hidden-file-path",
+    });
     pathBar.createSpan({ text: this.filePath });
 
     const wrapper = this.contentEl.createDiv({
@@ -472,7 +486,13 @@ export class HiddenFileView extends ItemView {
 
     try {
       const content = await this.app.vault.adapter.read(this.filePath);
-      await MarkdownRenderer.render(this.app, content, sizer, this.filePath, this);
+      await MarkdownRenderer.render(
+        this.app,
+        content,
+        sizer,
+        this.filePath,
+        this,
+      );
     } catch {
       sizer.createDiv({
         cls: "repo-nav-empty",
