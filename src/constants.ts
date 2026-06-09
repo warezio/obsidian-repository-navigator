@@ -6,7 +6,7 @@ export const VIEW_TYPE_HIDDEN_FILE = "repo-nav-hidden-file";
 export const DEFAULT_SETTINGS: RepoNavSettings = {
   showHiddenDirs: true,
   fileExtensions: ".md",
-  excludedDirs: "node_modules,.git",
+  excludedDirs: "node_modules,.git,.obsidian",
   sortOrder: "folders-first",
   collapseOnStartup: false,
 };

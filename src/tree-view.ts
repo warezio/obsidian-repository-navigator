@@ -1,6 +1,8 @@
 import {
   ItemView,
   MarkdownRenderer,
+  Menu,
+  Platform,
   WorkspaceLeaf,
   TFile,
   setIcon,
@@ -14,87 +16,16 @@ import {
 import { TreeNode } from "./types";
 import { buildTree } from "./tree-builder";
 
-interface ContextMenuAction {
-  label: string;
-  icon: string;
-  action: () => void;
-}
-
-class ContextMenu {
-  private menuEl: HTMLElement | null = null;
-  private closeCallback: (() => void) | null = null;
-
-  constructor(private document: Document) {
-    this.setupGlobalClickListener();
-  }
-
-  show(x: number, y: number, actions: ContextMenuAction[]): void {
-    this.hide();
-
-    const menuEl = this.document.createElement("div");
-    menuEl.addClass("repo-nav-context-menu");
-
-    for (const action of actions) {
-      const itemEl = menuEl.createDiv({ cls: "repo-nav-context-menu-item" });
-      itemEl.createSpan({ cls: "repo-nav-context-menu-icon" });
-      setIcon(itemEl, action.icon);
-      itemEl.createSpan({ text: action.label });
-      itemEl.addEventListener("click", (e) => {
-        e.stopPropagation();
-        action.action();
-        this.hide();
-      });
-    }
-
-    this.document.body.appendChild(menuEl);
-
-    // Position menu at cursor with boundary detection
-    const menuWidth = 150;
-    const itemHeight = 36;
-    const menuHeight = actions.length * itemHeight + 8;
-
-    let posX = x;
-    let posY = y;
-
-    if (posX + menuWidth > this.document.body.clientWidth) {
-      posX = this.document.body.clientWidth - menuWidth - 8;
-    }
-
-    if (posY + menuHeight > this.document.body.clientHeight) {
-      posY = this.document.body.clientHeight - menuHeight - 8;
-    }
-
-    menuEl.style.left = `${posX}px`;
-    menuEl.style.top = `${posY}px`;
-
-    this.menuEl = menuEl;
-  }
-
-  hide(): void {
-    if (this.menuEl) {
-      this.menuEl.remove();
-      this.menuEl = null;
-    }
-  }
-
-  private setupGlobalClickListener(): void {
-    this.document.addEventListener("click", () => {
-      this.hide();
-    });
-  }
-}
 
 export class RepoNavTreeView extends ItemView {
   plugin: RepoNavPlugin;
   treeData: TreeNode | null = null;
   expandedPaths: Set<string> = new Set();
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
-  private contextMenu: ContextMenu;
 
   constructor(leaf: WorkspaceLeaf, plugin: RepoNavPlugin) {
     super(leaf);
     this.plugin = plugin;
-    this.contextMenu = new ContextMenu(this.containerEl.ownerDocument);
   }
 
   getViewType(): string {
@@ -270,18 +201,20 @@ export class RepoNavTreeView extends ItemView {
       nodeEl.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        this.contextMenu.show(e.clientX, e.clientY, [
-          {
-            label: "Expand All",
-            icon: "chevrons-up-down",
-            action: () => this.expandAll(node.path),
-          },
-          {
-            label: "Collapse All",
-            icon: "chevrons-down-up",
-            action: () => this.collapseAll(node.path),
-          },
-        ]);
+        const menu = new Menu();
+        menu.addItem((item) =>
+          item
+            .setTitle("Expand All")
+            .setIcon("chevrons-up-down")
+            .onClick(() => this.expandAll(node.path))
+        );
+        menu.addItem((item) =>
+          item
+            .setTitle("Collapse All")
+            .setIcon("chevrons-down-up")
+            .onClick(() => this.collapseAll(node.path))
+        );
+        menu.showAtMouseEvent(e);
       });
 
       if (isExpanded) {
@@ -370,6 +303,8 @@ export class RepoNavTreeView extends ItemView {
     const existing = this.app.vault.getAbstractFileByPath(filePath);
     if (existing instanceof TFile) return existing;
 
+    if (!Platform.isDesktop) return null;
+
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const adapter = this.app.vault.adapter as any;
@@ -457,10 +392,12 @@ export class HiddenFileView extends ItemView {
   }
 
   async onOpen(): Promise<void> {
-    this.addAction("external-link", "Open in default app", () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.app as any).openWithDefaultApp(this.filePath);
-    });
+    if (Platform.isDesktop) {
+      this.addAction("external-link", "Open in default app", () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this.app as any).openWithDefaultApp(this.filePath);
+      });
+    }
 
     if (this.filePath) {
       await this.renderContent();
