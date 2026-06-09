@@ -1,0 +1,17 @@
+{
+  "$schemaVersion": 2,
+  "sessions": {
+    "__nosession__": {
+      "feature": "obsidian-repo-nav",
+      "phase": "do",
+      "action": null,
+      "timestamp": "2026-06-09T16:23:21.420Z"
+    },
+    "3682b253-7f36-4ef7-a45e-9364d0a3b74a": {
+      "feature": "obsidian-repo-nav",
+      "phase": null,
+      "action": null,
+      "timestamp": "2026-06-09T16:31:59.717Z"
+    }
+  }
+}

@@ -225,7 +225,7 @@ export class RepoNavTreeView extends ItemView {
       }
     } else {
       nodeEl.addClass("repo-nav-file");
-      nodeEl.style.paddingLeft = `${(depth + 1) * 16}px`;
+      nodeEl.style.paddingLeft = `${(depth + 1) * 16 + 4}px`;
 
       const activeFile = this.app.workspace.getActiveFile();
       if (activeFile && activeFile.path === node.path) {
