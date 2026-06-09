@@ -1,0 +1,5 @@
+{"hookEvent":"Stop","ccVersion":"2.1.90","sessionId":"3682b253-7f36-4ef7-a45e-9364d0a3b74a","timestamp":"2026-06-09T16:40:55.435Z","context":{"agent":"main","skill":null}}
+{"hookEvent":"SubagentStop","ccVersion":"2.1.90","sessionId":"3682b253-7f36-4ef7-a45e-9364d0a3b74a","timestamp":"2026-06-09T16:44:16.456Z","context":{"agentType":"unknown","status":"completed"}}
+{"hookEvent":"SubagentStop","ccVersion":"2.1.90","sessionId":"3682b253-7f36-4ef7-a45e-9364d0a3b74a","timestamp":"2026-06-09T16:44:30.670Z","context":{"agentType":"unknown","status":"completed"}}
+{"hookEvent":"Stop","ccVersion":"2.1.90","sessionId":"3682b253-7f36-4ef7-a45e-9364d0a3b74a","timestamp":"2026-06-09T17:14:43.526Z","context":{"agent":"main","skill":null}}
+{"hookEvent":"SubagentStop","ccVersion":"2.1.90","sessionId":"3682b253-7f36-4ef7-a45e-9364d0a3b74a","timestamp":"2026-06-09T17:17:58.874Z","context":{"agentType":"unknown","status":"completed"}}

@@ -1,0 +1,59 @@
+{
+  "timestamp": "2026-02-12T18:48:22.033Z",
+  "reason": "compaction",
+  "status": {
+    "version": "2.0",
+    "lastUpdated": "2026-02-07T22:35:00.000Z",
+    "activeFeatures": [
+      "obsidian-repo-nav"
+    ],
+    "primaryFeature": "obsidian-repo-nav",
+    "features": {
+      "obsidian-repo-nav": {
+        "phase": "do",
+        "startedAt": "2026-02-07T22:25:00.000Z",
+        "plan": {
+          "status": "completed",
+          "path": "docs/01-plan/features/obsidian-repo-nav.plan.md",
+          "completedAt": "2026-02-07T22:25:00.000Z"
+        },
+        "design": {
+          "status": "completed",
+          "path": "docs/02-design/features/obsidian-repo-nav.design.md",
+          "completedAt": "2026-02-07T22:30:00.000Z"
+        },
+        "do": {
+          "status": "completed",
+          "completedAt": "2026-02-07T22:35:00.000Z",
+          "files": [
+            "manifest.json",
+            "package.json",
+            "tsconfig.json",
+            "esbuild.config.mjs",
+            "styles.css",
+            "src/types.ts",
+            "src/constants.ts",
+            "src/main.ts",
+            "src/settings.ts",
+            "src/tree-builder.ts",
+            "src/tree-view.ts"
+          ]
+        }
+      }
+    },
+    "pipeline": {
+      "currentPhase": 3,
+      "level": "Dynamic",
+      "phaseHistory": [
+        "plan",
+        "design"
+      ]
+    },
+    "session": {
+      "startedAt": "2026-02-07T22:16:58.261Z",
+      "onboardingCompleted": true,
+      "lastActivity": "2026-02-07T22:35:00.000Z"
+    },
+    "history": []
+  }
+}
